@@ -1,23 +1,21 @@
 import chromadb
 from typing import List
-client = chromadb.EphemeralClient()
 
 
 
 
 def create_collection(name:str):
+    client = chromadb.PersistentClient(path=f"chroma/{name}")
     return client.get_or_create_collection(name=name)
 
-def add_data(c, documents: List[str]):
+def add_data(c:chromadb.Collection, documents: List[str], ids: List[str],metadatas:List[chromadb.Metadata]):
     c.upsert(
-    documents=[
-        "This is a document about pineapple",
-        "This is a document about oranges"
-    ],
-    ids=["id1", "id2"]
+    documents=documents,
+    ids=ids,
+    metadatas=metadatas
 )
 
-def get_result(c, query:str, k:int = 2):
+def get_result(c:chromadb.Collection, query:str, k:int = 2):
     return c.query(
     query_texts=query,
     n_results=k
